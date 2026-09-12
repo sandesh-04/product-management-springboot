@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Delete Product</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="product-mgmt.html" class="back-btn">
+        ← Back to Product Management
+    </a>
+
+    <div class="header">
+        <h1>Delete Product</h1>
+        <p>Search a product before deleting it</p>
+    </div>
+
+    <div class="search-box">
+
+        <input
+            type="number"
+            id="productId"
+            placeholder="Enter Product ID"
+        >
+
+        <button class="btn" onclick="findProduct()">
+            Search
+        </button>
+
+        <div id="message" class="message"></div>
+
+    </div>
+
+
+    <div
+        id="productDetails"
+        class="product-details"
+        style="display: none; margin-top: 25px;"
+    >
+
+        <div class="detail-row">
+            <strong>ID:</strong>
+            <span id="displayId"></span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Name:</strong>
+            <span id="displayName"></span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Description:</strong>
+            <span id="displayDescription"></span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Price:</strong>
+            ₹<span id="displayPrice"></span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Photo URL:</strong>
+            <span id="displayPhotoUrl"></span>
+        </div>
+
+        <button
+            class="btn btn-danger"
+            onclick="deleteProduct()"
+        >
+            Delete Product
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+let selectedProductId = null;
+
+
+function findProduct() {
+
+    const id = document.getElementById("productId").value;
+
+    if (!id) {
+
+        showMessage("Please enter Product ID.", "error");
+        return;
+
+    }
+
+    fetch(`/viewProduct/${id}`)
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Product not found.");
+            }
+
+            return response.json();
+
+        })
+
+        .then(product => {
+
+            selectedProductId = product.id;
+
+            document.getElementById("displayId").innerText =
+                product.id;
+
+            document.getElementById("displayName").innerText =
+                product.name;
+
+            document.getElementById("displayDescription").innerText =
+                product.description;
+
+            document.getElementById("displayPrice").innerText =
+                product.price;
+
+            document.getElementById("displayPhotoUrl").innerText =
+                product.photoUrl;
+
+            document.getElementById("productDetails")
+                .style.display = "block";
+
+            hideMessage();
+
+        })
+
+        .catch(error => {
+
+            document.getElementById("productDetails")
+                .style.display = "none";
+
+            showMessage(error.message, "error");
+
+        });
+
+}
+
+
+function deleteProduct() {
+
+    if (!selectedProductId) {
+        return;
+    }
+
+    const confirmation = confirm(
+        "Are you sure you want to delete this product?"
+    );
+
+    if (!confirmation) {
+        return;
+    }
+
+    fetch(`/deleteProduct/${selectedProductId}`, {
+
+        method: "DELETE"
+
+    })
+
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Failed to delete product.");
+        }
+
+        return response.text();
+
+    })
+
+    .then(result => {
+
+        showMessage(result, "success");
+
+        document.getElementById("productDetails")
+            .style.display = "none";
+
+        document.getElementById("productId").value = "";
+
+        selectedProductId = null;
+
+    })
+
+    .catch(error => {
+
+        showMessage(error.message, "error");
+
+    });
+
+}
+
+
+function showMessage(message, type) {
+
+    const messageBox = document.getElementById("message");
+
+    messageBox.style.display = "block";
+    messageBox.className = `message ${type}`;
+    messageBox.innerText = message;
+
+}
+
+
+function hideMessage() {
+
+    const messageBox = document.getElementById("message");
+
+    messageBox.style.display = "none";
+
+}
+
+</script>
+
+</body>
+</html>

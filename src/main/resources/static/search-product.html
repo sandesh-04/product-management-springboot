@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Search Product</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="product-mgmt.html" class="back-btn">
+        ← Back to Product Management
+    </a>
+
+    <div class="header">
+        <h1>Search Product</h1>
+        <p>Enter Product ID to search</p>
+    </div>
+
+    <div class="search-box">
+
+        <input
+            type="number"
+            id="productId"
+            placeholder="Enter Product ID"
+        >
+
+        <button class="btn" onclick="searchProduct()">
+            Search
+        </button>
+
+        <div id="message" class="message"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+function searchProduct() {
+
+    const id = document.getElementById("productId").value;
+
+    if (!id) {
+
+        showMessage("Please enter Product ID.", "error");
+        return;
+
+    }
+
+    fetch(`/viewProduct/${id}`)
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Product not found.");
+            }
+
+            return response.json();
+
+        })
+
+        .then(product => {
+
+            window.location.href =
+                `product-details.html?id=${product.id}`;
+
+        })
+
+        .catch(error => {
+
+            showMessage(error.message, "error");
+
+        });
+
+}
+
+function showMessage(message, type) {
+
+    const messageBox = document.getElementById("message");
+
+    messageBox.style.display = "block";
+    messageBox.className = `message ${type}`;
+    messageBox.innerText = message;
+
+}
+
+</script>
+
+</body>
+</html>

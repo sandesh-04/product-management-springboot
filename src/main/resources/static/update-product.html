@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Update Product</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="product-mgmt.html" class="back-btn">
+        ← Back to Product Management
+    </a>
+
+    <div class="header">
+        <h1>Update Product</h1>
+        <p>Update an existing product</p>
+    </div>
+
+    <div class="form-container">
+
+        <form id="updateProductForm">
+
+            <div class="form-group">
+                <label>Product ID</label>
+
+                <input
+                    type="number"
+                    id="productId"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Product Name</label>
+
+                <input
+                    type="text"
+                    id="productName"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+
+                <textarea
+                    id="productDescription"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Price</label>
+
+                <input
+                    type="number"
+                    id="productPrice"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Photo URL</label>
+
+                <input
+                    type="text"
+                    id="productPhotoUrl"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn">
+                Update Product
+            </button>
+
+        </form>
+
+        <div id="message" class="message"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById("updateProductForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const product = {
+
+            id:
+                Number(document.getElementById("productId").value),
+
+            name:
+                document.getElementById("productName").value,
+
+            description:
+                document.getElementById("productDescription").value,
+
+            price:
+                Number(document.getElementById("productPrice").value),
+
+            photoUrl:
+                document.getElementById("productPhotoUrl").value
+
+        };
+
+        fetch("/updateProduct", {
+
+            method: "PATCH",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(product)
+
+        })
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error("Failed to update product.");
+            }
+
+            return response.text();
+
+        })
+
+        .then(result => {
+
+            showMessage(result, "success");
+
+        })
+
+        .catch(error => {
+
+            showMessage(error.message, "error");
+
+        });
+
+    });
+
+
+function showMessage(message, type) {
+
+    const messageBox = document.getElementById("message");
+
+    messageBox.style.display = "block";
+    messageBox.className = `message ${type}`;
+    messageBox.innerText = message;
+
+}
+
+</script>
+
+</body>
+</html>
