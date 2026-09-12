@@ -22,6 +22,39 @@ A simple Product Management System built using **Java, Spring Boot, Spring Data 
 - Maven
 - Git & GitHub
 
+## Project Structure
+
+```text
+src/main/java
+└── com.product_mgmt
+    ├── controller
+    │   ├── PageController.java
+    │   └── ProductController.java
+    │
+    ├── entity
+    │   └── Product.java
+    │
+    ├── repository
+    │   └── ProductRepository.java
+    │
+    └── service
+        ├── ProductService.java
+        └── ProductServiceImplementation.java
+
+src/main/resources
+├── static
+│   ├── admin-home.html
+│   ├── product-mgmt.html
+│   ├── add-product.html
+│   ├── update-product.html
+│   ├── search-product.html
+│   ├── product-details.html
+│   ├── view-all-products.html
+│   └── delete-product.html
+│
+└── application.properties
+```
+
 ## REST APIs
 
 | Method | Endpoint | Description |
