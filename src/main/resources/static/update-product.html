@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Update Product</title>
 
     <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -18,68 +21,125 @@
     </a>
 
     <div class="header">
+
         <h1>Update Product</h1>
+
         <p>Update an existing product</p>
+
     </div>
+
 
     <div class="form-container">
 
-        <form id="updateProductForm">
+        <!-- Product ID -->
+
+        <div class="form-group">
+
+            <label>Product ID</label>
+
+            <input
+                type="number"
+                id="productId"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn"
+            id="loadProductBtn"
+        >
+            Load Product
+        </button>
+
+
+        <!-- Update Form -->
+
+        <form id="updateProductForm" style="display: none; margin-top: 25px;">
+
 
             <div class="form-group">
-                <label>Product ID</label>
 
-                <input
-                    type="number"
-                    id="productId"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
                 <label>Product Name</label>
 
                 <input
                     type="text"
                     id="productName"
-                    required
                 >
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Description</label>
 
                 <textarea
                     id="productDescription"
-                    required
                 ></textarea>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Price</label>
 
                 <input
                     type="number"
                     id="productPrice"
-                    required
                 >
+
             </div>
 
+
             <div class="form-group">
-                <label>Photo URL</label>
+
+                <label>Photo</label>
 
                 <input
                     type="text"
                     id="productPhotoUrl"
-                    required
                 >
+
             </div>
 
-            <button type="submit" class="btn">
+
+            <!-- Image Preview -->
+
+            <div class="form-group">
+
+                <label>Image Preview</label>
+
+                <img
+                    id="imagePreview"
+                    src=""
+                    alt="Product Image"
+                    style="
+                        display: none;
+                        width: 200px;
+                        height: 200px;
+                        object-fit: contain;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        padding: 5px;
+                    "
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
                 Update Product
             </button>
 
         </form>
+
 
         <div id="message" class="message"></div>
 
@@ -87,17 +147,160 @@
 
 </div>
 
+
 <script>
 
+
+let existingProduct = null;
+
+
+// Load Product
+
+document.getElementById("loadProductBtn")
+
+    .addEventListener("click", function() {
+
+        const id =
+            document.getElementById("productId").value;
+
+
+        if (!id) {
+
+            showMessage(
+                "Please enter Product ID.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        fetch(`/viewProduct/${id}`)
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error("Product not found.");
+
+                }
+
+                return response.json();
+
+            })
+
+            .then(product => {
+
+                existingProduct = product;
+
+
+                // Fill existing values
+
+                document.getElementById("productName").value =
+                    product.name;
+
+                document.getElementById("productDescription").value =
+                    product.description;
+
+                document.getElementById("productPrice").value =
+                    product.price;
+
+                document.getElementById("productPhotoUrl").value =
+                    product.photoUrl;
+
+
+                // Show image
+
+                const imagePreview =
+                    document.getElementById("imagePreview");
+
+                imagePreview.src =
+                    product.photoUrl;
+
+                imagePreview.style.display =
+                    "block";
+
+
+                // Show update form
+
+                document.getElementById("updateProductForm")
+                    .style.display = "block";
+
+
+                // Clear previous message
+
+                document.getElementById("message")
+                    .style.display = "none";
+
+            })
+
+            .catch(error => {
+
+                showMessage(
+                    error.message,
+                    "error"
+                );
+
+                document.getElementById("updateProductForm")
+                    .style.display = "none";
+
+            });
+
+    });
+
+
+
+// Image Preview
+
+document.getElementById("productPhotoUrl")
+
+    .addEventListener("input", function() {
+
+        const imageUrl = this.value;
+
+        const imagePreview =
+            document.getElementById("imagePreview");
+
+
+        if (imageUrl.trim() !== "") {
+
+            imagePreview.src = imageUrl;
+
+            imagePreview.style.display = "block";
+
+        }
+
+    });
+
+
+
+// Update Product
+
 document.getElementById("updateProductForm")
+
     .addEventListener("submit", function(event) {
 
         event.preventDefault();
 
+
+        if (!existingProduct) {
+
+            showMessage(
+                "Please load a product first.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        // Send existing values with updated values
+
         const product = {
 
-            id:
-                Number(document.getElementById("productId").value),
+            id: existingProduct.id,
 
             name:
                 document.getElementById("productName").value,
@@ -106,19 +309,24 @@ document.getElementById("updateProductForm")
                 document.getElementById("productDescription").value,
 
             price:
-                Number(document.getElementById("productPrice").value),
+                Number(
+                    document.getElementById("productPrice").value
+                ),
 
             photoUrl:
                 document.getElementById("productPhotoUrl").value
 
         };
 
+
         fetch("/updateProduct", {
 
             method: "PATCH",
 
             headers: {
+
                 "Content-Type": "application/json"
+
             },
 
             body: JSON.stringify(product)
@@ -128,7 +336,11 @@ document.getElementById("updateProductForm")
         .then(response => {
 
             if (!response.ok) {
-                throw new Error("Failed to update product.");
+
+                throw new Error(
+                    "Failed to update product."
+                );
+
             }
 
             return response.text();
@@ -137,30 +349,50 @@ document.getElementById("updateProductForm")
 
         .then(result => {
 
-            showMessage(result, "success");
+            showMessage(
+                result,
+                "success"
+            );
+
+
+            // Update stored product
+
+            existingProduct = product;
 
         })
 
         .catch(error => {
 
-            showMessage(error.message, "error");
+            showMessage(
+                error.message,
+                "error"
+            );
 
         });
 
     });
 
 
+
 function showMessage(message, type) {
 
-    const messageBox = document.getElementById("message");
+    const messageBox =
+        document.getElementById("message");
 
-    messageBox.style.display = "block";
-    messageBox.className = `message ${type}`;
-    messageBox.innerText = message;
+    messageBox.style.display =
+        "block";
+
+    messageBox.className =
+        `message ${type}`;
+
+    messageBox.innerText =
+        message;
 
 }
+
 
 </script>
 
 </body>
+
 </html>

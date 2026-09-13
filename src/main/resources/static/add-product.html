@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Add Product</title>
 
     <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -18,8 +21,11 @@
     </a>
 
     <div class="header">
+
         <h1>Add Product</h1>
+
         <p>Add a new product</p>
+
     </div>
 
     <div class="form-container">
@@ -27,6 +33,7 @@
         <form id="addProductForm">
 
             <div class="form-group">
+
                 <label>Product Name</label>
 
                 <input
@@ -34,18 +41,24 @@
                     id="productName"
                     required
                 >
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Description</label>
 
                 <textarea
                     id="productDescription"
                     required
                 ></textarea>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Price</label>
 
                 <input
@@ -53,23 +66,55 @@
                     id="productPrice"
                     required
                 >
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Photo URL</label>
 
                 <input
                     type="text"
                     id="productPhotoUrl"
+                    placeholder="Enter image URL"
                     required
                 >
+
             </div>
 
+
+            <!-- Image Preview -->
+
+            <div class="form-group">
+
+                <label>Image Preview</label>
+
+                <img
+                    id="imagePreview"
+                    src=""
+                    alt="Image Preview"
+                    style="display: none; width: 200px; height: 200px; object-fit: contain; border: 1px solid #ddd; border-radius: 8px; padding: 5px;"
+                >
+
+                <p
+                    id="imageError"
+                    style="display: none; color: #dc2626; margin-top: 8px;"
+                >
+                    Unable to load image. Please check the URL.
+                </p>
+
+            </div>
+
+
             <button type="submit" class="btn">
+
                 Add Product
+
             </button>
 
         </form>
+
 
         <div id="message" class="message"></div>
 
@@ -77,16 +122,64 @@
 
 </div>
 
+
 <script>
 
+
+// Image Preview
+
+document.getElementById("productPhotoUrl")
+
+    .addEventListener("input", function() {
+
+        const imageUrl = this.value;
+
+        const imagePreview =
+            document.getElementById("imagePreview");
+
+        const imageError =
+            document.getElementById("imageError");
+
+
+        imageError.style.display = "none";
+
+        imagePreview.style.display = "none";
+
+
+        if (imageUrl.trim() !== "") {
+
+            imagePreview.src = imageUrl;
+
+            imagePreview.style.display = "block";
+
+        }
+
+    });
+
+
+document.getElementById("imagePreview")
+
+    .addEventListener("error", function() {
+
+        this.style.display = "none";
+
+        document.getElementById("imageError")
+            .style.display = "block";
+
+    });
+
+
 document.getElementById("addProductForm")
+
     .addEventListener("submit", function(event) {
 
         event.preventDefault();
 
+
         const product = {
 
-            name: document.getElementById("productName").value,
+            name:
+                document.getElementById("productName").value,
 
             description:
                 document.getElementById("productDescription").value,
@@ -99,12 +192,15 @@ document.getElementById("addProductForm")
 
         };
 
+
         fetch("/addProduct", {
 
             method: "POST",
 
             headers: {
+
                 "Content-Type": "application/json"
+
             },
 
             body: JSON.stringify(product)
@@ -114,7 +210,9 @@ document.getElementById("addProductForm")
         .then(response => {
 
             if (!response.ok) {
+
                 throw new Error("Failed to add product.");
+
             }
 
             return response.text();
@@ -127,6 +225,10 @@ document.getElementById("addProductForm")
 
             document.getElementById("addProductForm").reset();
 
+            document.getElementById("imagePreview").style.display = "none";
+
+            document.getElementById("imageError").style.display = "none";
+
         })
 
         .catch(error => {
@@ -138,17 +240,23 @@ document.getElementById("addProductForm")
     });
 
 
+
 function showMessage(message, type) {
 
-    const messageBox = document.getElementById("message");
+    const messageBox =
+        document.getElementById("message");
 
     messageBox.style.display = "block";
+
     messageBox.className = `message ${type}`;
+
     messageBox.innerText = message;
 
 }
 
+
 </script>
 
 </body>
+
 </html>

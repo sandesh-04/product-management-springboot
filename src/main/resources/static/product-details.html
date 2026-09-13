@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Product Details</title>
 
     <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -18,48 +21,91 @@
     </a>
 
     <div class="header">
+
         <h1>Product Details</h1>
+
         <p>Details of the selected product</p>
+
     </div>
+
 
     <div class="product-details" id="productDetails">
 
         <div class="detail-row">
+
             <strong>ID:</strong>
+
             <span id="productId"></span>
+
         </div>
 
+
         <div class="detail-row">
+
             <strong>Name:</strong>
+
             <span id="productName"></span>
+
         </div>
 
+
         <div class="detail-row">
+
             <strong>Description:</strong>
+
             <span id="productDescription"></span>
+
         </div>
 
+
         <div class="detail-row">
+
             <strong>Price:</strong>
+
             ₹<span id="productPrice"></span>
+
         </div>
 
+
+        <!-- Product Image -->
+
         <div class="detail-row">
-            <strong>Photo URL:</strong>
-            <span id="productPhotoUrl"></span>
+
+            <strong>Product Image:</strong>
+
+            <img
+                id="productImage"
+                src=""
+                alt="Product Image"
+                style="
+                    width: 200px;
+                    height: 200px;
+                    object-fit: contain;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 5px;
+                    margin-top: 10px;
+                "
+            >
+
         </div>
 
     </div>
+
 
     <div id="message" class="message"></div>
 
 </div>
 
+
 <script>
 
-const params = new URLSearchParams(window.location.search);
+
+const params =
+    new URLSearchParams(window.location.search);
 
 const id = params.get("id");
+
 
 if (!id) {
 
@@ -72,7 +118,9 @@ if (!id) {
         .then(response => {
 
             if (!response.ok) {
+
                 throw new Error("Product not found.");
+
             }
 
             return response.json();
@@ -81,11 +129,26 @@ if (!id) {
 
         .then(product => {
 
-            document.getElementById("productId").innerText = product.id;
-            document.getElementById("productName").innerText = product.name;
-            document.getElementById("productDescription").innerText = product.description;
-            document.getElementById("productPrice").innerText = product.price;
-            document.getElementById("productPhotoUrl").innerText = product.photoUrl;
+            document.getElementById("productId").innerText =
+                product.id;
+
+            document.getElementById("productName").innerText =
+                product.name;
+
+            document.getElementById("productDescription").innerText =
+                product.description;
+
+            document.getElementById("productPrice").innerText =
+                product.price;
+
+
+            // Display actual product image
+
+            document.getElementById("productImage").src =
+                product.photoUrl;
+
+            document.getElementById("productImage").alt =
+                product.name;
 
         })
 
@@ -97,17 +160,25 @@ if (!id) {
 
 }
 
+
 function showMessage(message, type) {
 
-    const messageBox = document.getElementById("message");
+    const messageBox =
+        document.getElementById("message");
 
     messageBox.style.display = "block";
-    messageBox.className = `message ${type}`;
-    messageBox.innerText = message;
+
+    messageBox.className =
+        `message ${type}`;
+
+    messageBox.innerText =
+        message;
 
 }
+
 
 </script>
 
 </body>
+
 </html>
